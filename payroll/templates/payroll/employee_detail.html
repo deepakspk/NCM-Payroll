@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron mt-3">
+  <h1 class="display-4">Employee details</h1> <hr>
+  <img src="{{employee_detail.img.url}}" width="200" alt="" class="img-thumbnail" >
+  <div class="row">
+    <div class="col-xs-4 ">      
+      <p> Employee ID </p>
+      <p> Name</p>
+      <p> Department</p>
+      <p> Designation</p>
+      <p> Joining Date </p>
+      <p> Phone </p>
+      <p> Email</p>
+      <p> Date of Birth </p>
+      <p> Gender</p>
+      <p> Citizenship</p>
+      <p> Religion</p>      
+      <p> Couyntry of Birth</p>
+      <p>  UAE Address</p>
+      <p> Home country Address</p>
+      <p> Home country Phone</p>
+      <p> </p>
+    </div>
+    <div class="col-xs-4 offset-1">
+      <p>  {{ employee_detail.employee_id }}</p>
+      <p>  {{employee_detail.first_name}} {{employee_detail.last_name}}</p>
+      <p> {{employee_detail.department }} </p>
+      <p>  {{employee_detail.designation }}</p>
+      <p>  {{employee_detail.joining_date }}</p>
+      <p>  {{employee_detail.manager}}</p>
+      <p>  {{employee_detail.phone}}</p>
+      <p>  {{employee_detail.email}}</p>
+      <p>  {{employee_detail.DOB}}</p>
+      <p> {{employee_detail.gender}}</p>
+      <p> {{employee_detail.religion}}</p>
+      <p> {{employee_detail.citizenship}}</p>
+      <p>{{employee_detail.country_birth}}</p>
+      <p>{{employee_detail.uae_address}}</p>
+      <p> {{employee_detail.home_country_address}}</p>
+      <p> {{employee_detail.home_country_phone}}</p>
+    </div>
+  </div> <hr>
+    <a class="btn btn-outline-secondary btn-lg" href="{% url 'payroll:employee_update' pk=employee_detail.pk %}" role="button">Edit employee data</a>
+    <a class="btn btn-outline-danger btn-lg" href="{% url 'payroll:employee_list' %}" role="button">Back to employee list</a>
+  </div>
+
+{% endblock %}
