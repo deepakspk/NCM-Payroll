@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<h1> Upload Employee Documents</h1>
+<!-- <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="docs1">
+    <button type="submit" class="btn btn-primary"> Upload file</button>
+</form> -->
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary"> Upload file</button>
+</form>
+{% endblock %}

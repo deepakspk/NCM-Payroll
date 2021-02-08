@@ -1,4 +1,4 @@
-from .models import Department, Employee, Payslip, ProcessSalary, Additionalpay, Deduction, Timesheet, Clinical
+from .models import Department, Employee, Payslip, ProcessSalary, Additionalpay, Deduction, Timesheet, Document
 from django.forms import ModelForm, Form
 from django import forms
 from . import models
@@ -28,6 +28,12 @@ class EmployeeForm(ModelForm):
          super().__init__(*args, **kwargs)
          for field in self.fields:
              self.fields[field].widget.attrs.update({'class':'form-control'})
+
+class DocumentForm(ModelForm):
+    class Meta:
+        model= Document
+        fields = '__all__'
+        
 
 class AdditionalForm(ModelForm):
     class Meta:

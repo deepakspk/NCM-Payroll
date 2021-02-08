@@ -40,7 +40,24 @@
       <p> {{employee_detail.home_country_address}}</p>
       <p> {{employee_detail.home_country_phone}}</p>
     </div>
-  </div> <hr>
+  </div> <hr mt-5>
+  <h3> Employee Documents</h3>
+  <div class="row">
+    <div class="col-xs-4 ">
+      <p> Document 1 </p>
+      <p> Document 2 </p>
+      <p> Document 3 </p>
+    </div>
+    <div class="col-xs-4 offset-1">
+      {% for aPay in empDocs %}
+      
+      <p><a href="{{aPay.docs1.url}}" class="btn btn-primary btn-sm">Download</a></p>
+      <p><a href="{{aPay.docs2.url}}" class="btn btn-primary btn-sm">Download</a></p>
+      <p><a href="{{aPay.docs3.url}}" class="btn btn-primary btn-sm">Download</a></p>
+      {% endfor %}
+    </div>
+  </div> 
+  <hr mb-5>
     <a class="btn btn-outline-secondary btn-lg" href="{% url 'payroll:employee_update' pk=employee_detail.pk %}" role="button">Edit employee data</a>
     <a class="btn btn-outline-danger btn-lg" href="{% url 'payroll:employee_list' %}" role="button">Back to employee list</a>
   </div>

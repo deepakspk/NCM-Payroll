@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.urls import reverse_lazy
 from django.views.generic import (View, ListView, TemplateView, DetailView, CreateView, UpdateView, DeleteView)
-from . forms import EmployeeForm, DepartmentForm, PayslipForm, ProcessSalaryForm, AdditionalForm, DeductionForm, TimesheetForm
+from . forms import EmployeeForm, DepartmentForm, PayslipForm, ProcessSalaryForm, AdditionalForm, DeductionForm, TimesheetForm, DocumentForm
 from . import models
 import re, os
 from datetime import date
@@ -23,8 +23,25 @@ from django.conf import settings
 from django.http import FileResponse
 from django.http import Http404
 from django.views.generic.detail import BaseDetailView
+from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
+
+
+
+def employee_docs(request):
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect ('payroll:employee_list')
+    else:
+        form = DocumentForm()
+    return render(request, 'payroll/employee_docs.html',{
+        'form' : form
+    })
+
+
 class EmployeeListView(ListView):
     template_name = 'payroll/employee_list.html'
     context_object_name = 'employee_list'
@@ -39,8 +56,9 @@ class EmployeeDetailView(DetailView):
     template_name='payroll/employee_detail.html'
 
     def get_context_data(self, *args, **kwargs):
-        data = super(EmployeeDetailView,self).get_context_data(*args,**kwargs)
-        return data
+        context = super().get_context_data(**kwargs)
+        context['empDocs'] = models.Document.objects.filter(employee=self.object)
+        return context
 
 class EmployeeCreateView(CreateView):
     template_name = 'payroll/employee_create.html'

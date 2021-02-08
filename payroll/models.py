@@ -51,6 +51,14 @@ class Employee(models.Model):
     def full_name(self):
         return str(self.first_name) +" "+ str(self.last_name)
 
+class Document(models.Model):
+    employee               =   models.ForeignKey(Employee, related_name='employee_document', on_delete=models.CASCADE, blank=True,null=True) 
+    docs1                 =   models.FileField(upload_to='documents/')
+    docs2                 =   models.FileField(upload_to='documents/')
+    docs3                 =   models.FileField(upload_to='documents/')
+
+def __str__(self):
+    return str(self.employee)
 
 class Payslip(models.Model):
     employee               =   models.ForeignKey(Employee, related_name='employee_payslip', on_delete=models.CASCADE, blank=True,null=True)
@@ -108,7 +116,7 @@ class Clinical(models.Model):
     competencies_c         =   (('TRUE', 'TRUE'),('FALSE', 'FALSE'),)
     competencies           =   models.CharField(max_length=15, choices=competencies_c)
     visa_status_c         =   (('Employer with NOC', 'Employer with NOC'),('Visit/Tourist', 'Visit/Tourist'),('Cancelled', 'Cancelled'),('Spouse/Parent', 'Spouse/Parent'),)
-    visa_status           =   models.CharField(max_length=15, choices=visa_status_c)
+    visa_status           =   models.CharField(max_length=90, choices=visa_status_c)
     previous_visa_sponser =   models.CharField(max_length=90, blank=True,null=True,)
     doh_licence_as        =   models.CharField(max_length=90, blank=True,null=True,)
     work_order            =   models.CharField(max_length=90, blank=True,null=True,)

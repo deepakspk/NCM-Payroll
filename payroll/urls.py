@@ -5,6 +5,9 @@ from django.contrib import admin
 app_name = 'payroll'
 
 urlpatterns = [
+
+path('upload_docs/',views.employee_docs, name='employee_docs'),
+
 path('employee_list',views.EmployeeListView.as_view(),name='employee_list'),
 path('table/',views.table,name='table'),
 
