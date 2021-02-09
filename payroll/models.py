@@ -53,9 +53,14 @@ class Employee(models.Model):
 
 class Document(models.Model):
     employee               =   models.ForeignKey(Employee, related_name='employee_document', on_delete=models.CASCADE, blank=True,null=True) 
-    docs1                 =   models.FileField(upload_to='documents/')
-    docs2                 =   models.FileField(upload_to='documents/')
-    docs3                 =   models.FileField(upload_to='documents/')
+    category_choices       = (('ID', 'ID'),
+                            ('Personal', 'Personal'),
+                            ('Employment', 'Employment'),
+                            ('Letter', 'Letter'),
+                            ('Other', 'Other'),)
+    category              =   models.CharField(max_length=60, choices=category_choices, blank=True,null=True)
+    label                 =   models.CharField(max_length=160, blank=True,null=True)
+    document              =   models.FileField(upload_to='documents/')
 
 def __str__(self):
     return str(self.employee)

@@ -42,21 +42,29 @@
     </div>
   </div> <hr mt-5>
   <h3> Employee Documents</h3>
-  <div class="row">
-    <div class="col-xs-4 ">
-      <p> Document 1 </p>
-      <p> Document 2 </p>
-      <p> Document 3 </p>
-    </div>
-    <div class="col-xs-4 offset-1">
-      {% for aPay in empDocs %}
-      
-      <p><a href="{{aPay.docs1.url}}" class="btn btn-primary btn-sm">Download</a></p>
-      <p><a href="{{aPay.docs2.url}}" class="btn btn-primary btn-sm">Download</a></p>
-      <p><a href="{{aPay.docs3.url}}" class="btn btn-primary btn-sm">Download</a></p>
-      {% endfor %}
-    </div>
-  </div> 
+  
+    <table class="table table-hover h-100 p-3" id="table_id" class="dispaly">
+      <thead>
+        <tr>
+          <th scope="col">SN</th>
+          <th scope="col">Name</th>
+          <th scope="col">Category</th>
+          <th scope="col">Label</th>
+          <th scope="col">File</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for employee in empDocs %}
+        <tr>
+          <td scope="row">{{ forloop.counter }}</td>
+          <td> {{employee.employee }}</td>
+          <td> {{employee.category }}</td>
+          <td> {{employee.label }}</td>
+          <td> <a href="{{employee.document.url}}" class="btn btn-primary btn-sm">Download</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   <hr mb-5>
     <a class="btn btn-outline-secondary btn-lg" href="{% url 'payroll:employee_update' pk=employee_detail.pk %}" role="button">Edit employee data</a>
     <a class="btn btn-outline-danger btn-lg" href="{% url 'payroll:employee_list' %}" role="button">Back to employee list</a>

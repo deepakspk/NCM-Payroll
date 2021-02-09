@@ -27,7 +27,31 @@ from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
 
+class DocumentListView(ListView):
+    template_name = 'payroll/document_list.html'
+    context_object_name = 'document_list'
+    model = models.Document
 
+    def get_queryset(self):
+        return models.Document.objects.all()
+
+class DocumentCreateView(CreateView):
+    template_name = 'payroll/document_create.html'
+    form_class = DocumentForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+class DocumentUpdateView(UpdateView):
+    model = models.Document
+    form_class = DocumentForm
+    template_name='payroll/document_update.html'
+
+
+class DocumentDeleteView(DeleteView):
+    model = models.Document
+    success_url = reverse_lazy("payroll:document_list")
 
 def employee_docs(request):
     if request.method == 'POST':

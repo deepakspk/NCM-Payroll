@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="jumbotron shadow-sm p-3 mb-5 rounded mt-3">
+  <h2 class="display-4"> Document list</h2>
+  <a class="btn btn-outline-info btn-lg mb-2" href="{% url 'payroll:employee_docs' %}" role="button"><i class="fas fa-user-plus"> </i> Add new document</a>
+  <hr>
+  <table class="table table-hover h-100 p-3" id="table_id" class="dispaly">
+    <thead>
+        <tr>
+          <th scope="col">SN</th>
+          <th scope="col">Name</th>
+          <th scope="col">Category</th>
+          <th scope="col">Label</th>
+          <th scope="col">File</th>
+          <th scope="col">Edit</th>
+          <th scope="col">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for employee in document_list %}
+        <tr>
+          <td scope="row">{{ forloop.counter }}</td>
+          <td> {{employee.employee }}</td>
+          <td> {{employee.category }}</td>
+          <td> {{employee.label }}</td>
+          <td> <a href="{{employee.document.url}}" class="btn btn-primary btn-sm">Download</a></td>
+          <td> <a href="{% url 'payroll:document_update' pk=employee.pk %}"><i class="fas fa-edit"> </a></td>
+            <td> <a href="{% url 'payroll:document_delete' pk=employee.pk %}"> <i class="fas fa-trash-alt"></i></a> </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+  </table>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+  $(document).ready(function() {
+    $('#table_id').DataTable();
+  });
+</script>
+{% endblock %}

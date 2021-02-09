@@ -6,7 +6,10 @@ app_name = 'payroll'
 
 urlpatterns = [
 
+path('document_list',views.DocumentListView.as_view(),name='document_list'),
+path('document/update/<str:pk>/',views.DocumentUpdateView.as_view(),name='document_update'),
 path('upload_docs/',views.employee_docs, name='employee_docs'),
+path('document/delete/<str:pk>/',views.DocumentDeleteView.as_view(),name='document_delete'),
 
 path('employee_list',views.EmployeeListView.as_view(),name='employee_list'),
 path('table/',views.table,name='table'),
