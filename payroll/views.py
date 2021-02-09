@@ -1935,3 +1935,6 @@ def table(request):
 def delete_everything(self):
     models.Timesheet.objects.all().delete()
     return redirect('payroll:timesheet_list')
+
+
+    
