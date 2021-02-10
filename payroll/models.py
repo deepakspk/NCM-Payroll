@@ -65,6 +65,22 @@ class Document(models.Model):
 def __str__(self):
     return str(self.employee)
 
+class Leave(models.Model):
+    employee               =   models.ForeignKey(Employee, related_name='employee_leave', on_delete=models.CASCADE, blank=True,null=True) 
+    leave_choices       = (('Annual', 'Annual'),
+                            ('Sick', 'Sick'),
+                            ('LWOP', 'LWOP'),
+                            ('Special', 'Special'),)
+    leave              =   models.CharField(max_length=60, choices=leave_choices, blank=True,null=True)
+    date_from          =   models.DateField(null=True, blank=True)
+    date_to            =   models.DateField(null=True, blank=True)
+    approve_by         =   models.ForeignKey(Employee, related_name='approve_by', on_delete=models.CASCADE, blank=True,null=True) 
+    comment            =   models.TextField(max_length=260, blank=True,null=True)
+
+
+def __str__(self):
+    return str(self.employee)
+
 class Payslip(models.Model):
     employee               =   models.ForeignKey(Employee, related_name='employee_payslip', on_delete=models.CASCADE, blank=True,null=True)
     basic_salary           =   models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)

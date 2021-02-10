@@ -6,6 +6,12 @@ app_name = 'payroll'
 
 urlpatterns = [
 
+path('leave_list',views.LeaveListView.as_view(),name='leave_list'),
+path('leave/<str:pk>/',views.LeaveDetailView.as_view(),name='leave_detail'),
+path('leave_create/',views.LeaveCreateView.as_view(),name='leave_create'),
+path('leave/update/<str:pk>/',views.LeaveUpdateView.as_view(),name='leave_update'),
+path('leave/delete/<str:pk>/',views.LeaveDeleteView.as_view(),name='leave_delete'),
+
 path('document_list',views.DocumentListView.as_view(),name='document_list'),
 path('document/update/<str:pk>/',views.DocumentUpdateView.as_view(),name='document_update'),
 path('upload_docs/',views.employee_docs, name='employee_docs'),

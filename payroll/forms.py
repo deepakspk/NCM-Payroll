@@ -1,4 +1,4 @@
-from .models import Department, Employee, Payslip, ProcessSalary, Additionalpay, Deduction, Timesheet, Document
+from .models import Department, Employee, Payslip, ProcessSalary, Additionalpay, Deduction, Timesheet, Document, Leave
 from django.forms import ModelForm, Form
 from django import forms
 from . import models
@@ -33,6 +33,25 @@ class DocumentForm(ModelForm):
     class Meta:
         model= Document
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+         super().__init__(*args, **kwargs)
+         for field in self.fields:
+             self.fields[field].widget.attrs.update({'class':'form-control'})
+
+class LeaveForm(ModelForm):
+    class Meta:
+        model= Leave
+        fields = '__all__'
+        widgets = {
+            'date_from':forms.DateInput(attrs={'type':'date'}),
+            'date_to':forms.DateInput(attrs={'type':'date'})
+        }
+
+    def __init__(self, *args, **kwargs):
+         super().__init__(*args, **kwargs)
+         for field in self.fields:
+             self.fields[field].widget.attrs.update({'class':'form-control'})
         
 
 class AdditionalForm(ModelForm):

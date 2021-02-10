@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.urls import reverse_lazy
 from django.views.generic import (View, ListView, TemplateView, DetailView, CreateView, UpdateView, DeleteView)
-from . forms import EmployeeForm, DepartmentForm, PayslipForm, ProcessSalaryForm, AdditionalForm, DeductionForm, TimesheetForm, DocumentForm
+from . forms import EmployeeForm, DepartmentForm, PayslipForm, ProcessSalaryForm, AdditionalForm, DeductionForm, TimesheetForm, DocumentForm, LeaveForm
 from . import models
 import re, os
 from datetime import date
@@ -47,6 +47,7 @@ class DocumentUpdateView(UpdateView):
     model = models.Document
     form_class = DocumentForm
     template_name='payroll/document_update.html'
+    success_url = reverse_lazy("payroll:document_list")
 
 
 class DocumentDeleteView(DeleteView):
@@ -65,6 +66,43 @@ def employee_docs(request):
         'form' : form
     })
 
+class LeaveListView(ListView):
+    template_name = 'payroll/leave_list.html'
+    context_object_name = 'leave_list'
+    model = models.Leave
+
+    def get_queryset(self):
+        return models.Leave.objects.all()
+
+class LeaveDetailView(DetailView):
+    model = models.Leave
+    context_object_name = 'leave_detail'
+    template_name='payroll/leave_detail.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)        
+        return context
+
+class LeaveCreateView(CreateView):
+    template_name = 'payroll/leave_create.html'
+    form_class = LeaveForm
+    # success_url = reverse_lazy("payroll:leave_list")
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+class LeaveUpdateView(UpdateView):
+    model = models.Leave
+    form_class = LeaveForm
+    template_name='payroll/leave_update.html'
+    success_url = reverse_lazy("payroll:leave_list")
+
+
+class LeaveDeleteView(DeleteView):
+    model = models.Leave
+    success_url = reverse_lazy("payroll:leave_list")
+
 
 class EmployeeListView(ListView):
     template_name = 'payroll/employee_list.html'
@@ -82,6 +120,7 @@ class EmployeeDetailView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context['empDocs'] = models.Document.objects.filter(employee=self.object)
+        context['empLeave'] = models.Leave.objects.filter(employee=self.object)
         return context
 
 class EmployeeCreateView(CreateView):
@@ -854,7 +893,7 @@ def update_ps(request,pk):
     data.status = 'Paid'
     data.save()
 
-    return redirect('payroll:process_salary_list')
+    return redirect('payroll:payroll_register')
 
 class ProcessSalaryCreateView(CreateView):
     template_name = 'payroll/process_salary_create.html'

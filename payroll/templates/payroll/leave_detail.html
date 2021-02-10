@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron mt-3">
+  <h3>Leave detail</h3> <hr>
+    <div class="row">
+    <div class="col-xs-4 ">      
+      <p> Leave type </p>
+      <p> Starting Date </p>
+      <p> Ending Date </p>
+      <p> Approve By </p>
+      <p> Comment</p>
+     
+    </div>
+    <div class="col-xs-4 offset-1">
+      <p>  {{ leave_detail.leave }}</p>
+      <p>  {{leave_detail.date_from}} </p>
+      <p>  {{leave_detail.date_to }}</p>
+      <p>  {{leave_detail.approve_by}}</p>
+      <p>  {{leave_detail.comment}}</p>      
+    </div>
+  </div>
+
+    <h3>Employee details</h3> <hr>
+    <div class="row">
+    <div class="col-xs-4 ">      
+      <p> Employee ID </p>
+      <p> Name</p>
+      <p> Joining Date </p>
+      <p> Phone </p>
+      <p> Email</p>
+     
+    </div>
+    <div class="col-xs-4 offset-1">
+      <p>  {{ leave_detail.employee.employee_id }}</p>
+      <p>  {{leave_detail.employee.first_name}} </p>
+      <p>  {{leave_detail.employee.joining_date }}</p>
+      <p>  {{leave_detail.employee.manager}}</p>
+      <p>  {{leave_detail.employee.phone}}</p>
+      <p>  {{leave_detail.employee.email}}</p>
+      
+    </div>
+  </div>
+  <hr mb-5>
+    <a class="btn btn-outline-secondary btn-lg mt-2" href="{% url 'payroll:leave_update' pk=leave_detail.pk %}" role="button">Edit Leave</a>
+    <a class="btn btn-outline-danger btn-lg mt-2" href="{% url 'payroll:leave_list' %}" role="button">Back to Leave list</a>
+  </div>
+
+{% endblock %}

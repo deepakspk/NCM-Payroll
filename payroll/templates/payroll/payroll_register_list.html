@@ -17,7 +17,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for pay in processing_data %}
+          {% for pay in processing_data reversed %}
           <tr>
             <td scope="row">{{ forloop.counter }}</td>
             <td scope="row"> <a href="{% url 'payroll:process_salary_detail' pk=pay.0.pk %}">
@@ -48,7 +48,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for pay in paid_data %}
+          {% for pay in paid_data reversed %}
           <tr>
             <td scope="row">{{ forloop.counter }}</td>
             <td scope="row"> <a href="{% url 'payroll:payroll_detail' pk=pay.0.pk %}">

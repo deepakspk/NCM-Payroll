@@ -65,9 +65,35 @@
         {% endfor %}
       </tbody>
     </table>
+    <h3> Employee Leave</h3>
+  
+    <table class="table table-hover h-100 p-3" id="table_id" class="dispaly">
+      <thead>
+        <tr>
+          <th scope="col">SN</th>
+          <th scope="col">Name</th>
+          <th scope="col">Leave Type</th>
+          <th scope="col">Date From</th>
+          <th scope="col">Date To</th>
+          <th scope="col">Approve by</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for employee in empLeave %}
+        <tr>
+          <td scope="row">{{ forloop.counter }}</td>
+          <td> {{employee.employee }}</td>
+          <td> {{employee.leave }}</td>
+          <td> {{employee.date_from }}</td>
+          <td> {{employee.date_to }}</td>
+          <td> {{employee.approve_by }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   <hr mb-5>
-    <a class="btn btn-outline-secondary btn-lg" href="{% url 'payroll:employee_update' pk=employee_detail.pk %}" role="button">Edit employee data</a>
-    <a class="btn btn-outline-danger btn-lg" href="{% url 'payroll:employee_list' %}" role="button">Back to employee list</a>
+    <a class="btn btn-outline-secondary btn-lg mt-2" href="{% url 'payroll:employee_update' pk=employee_detail.pk %}" role="button">Edit employee data</a>
+    <a class="btn btn-outline-danger btn-lg mt-2" href="{% url 'payroll:employee_list' %}" role="button">Back to employee list</a>
   </div>
 
 {% endblock %}
