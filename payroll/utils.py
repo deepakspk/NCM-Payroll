@@ -178,10 +178,10 @@ def getPdf(pk,empid):
     
     elems = []
 
-    picture = Image('static/images/aspen.png')
-    picture.drawWidth = 200
-    picture.drawHeight = 35
-    pic = Table([[picture]],200,35)
+    picture = Image('static/images/NCMLogo2.png')
+    picture.drawWidth = 120
+    picture.drawHeight = 30
+    pic = Table([[picture]],120,30)
 
     pic = Table([
         [pic]
@@ -193,7 +193,7 @@ def getPdf(pk,empid):
     elems.append(pic)
 
     location = Table([
-        ['ABU DHABI, UAE']
+        ['Tinkune, Kathmandu Nepal']
     ], [500])
     locationStyle = TableStyle([
         ('BOTTOMPADDING',(0,0),(-1,-1), 10),
@@ -250,9 +250,19 @@ def getPdf(pk,empid):
     ])
     permit.setStyle(permitStyle)
     elems.append(permit)
-
+    
+    bank = Table([
+        ['Bank ',' ', getReport.bank_name]
+    ], [100,10,410])
+    bankStyle = TableStyle([
+        ('TOPPADDING',(0,0),(-1,-1), 0),
+        ('BOTTOMPADDING',(0,0),(-1,-1), 0),
+    ])
+    bank.setStyle(bankStyle)
+    elems.append(bank)
+    
     mode = Table([
-        ['Mode of payment',' ', getReport.mode_of_payment]
+        ['Ac No.',' ', getReport.bank_ac]
     ], [100,10,410])
     modeStyle = TableStyle([
         ('TOPPADDING',(0,0),(-1,-1), 0),

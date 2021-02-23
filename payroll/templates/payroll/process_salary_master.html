@@ -10,8 +10,8 @@
     width: 100%;
   }
 </style>
-<p class="new_p"> <strong> Uniteam Mediacal Assistance LLC</strong> </p>
-<p class="new_p2"> <strong> Payroll for the month of {{master.4.15.salary_month | date:'M-Y'}} </strong> </p>
+<p class="new_p"> <strong> Nepal Can</strong> </p>
+<p class="new_p2"> <strong> Payroll for the month of {{month | date:'M-Y'}} </strong> </p>
 
   {% for a in master %}
   <p class="new_p"> {{a.0}} {{a.1}}</p>
@@ -29,7 +29,6 @@
           <th scope="col">Other</th>
           <th scope="col">Gross</th>
           <th scope="col">O.T/Other Income</th>
-          <th scope="col">Annual Ticket</th>
           <th scope="col">Salary Advance</th>
           <th scope="col">Deduction</th>
           <th scope="col">LWOP</th>
@@ -54,7 +53,6 @@
         <td> {{i.1.other}} </td>
         <td> {{i.1.gross_pay}} </td>
         <td> {{i.2}} </td>
-        <td> {{i.3}} </td>
         <td> {{i.4}}</td>
         <td> {{i.5}} </td>
         <td> {{i.9}}</td>
@@ -76,7 +74,6 @@
         <th scope="col">{{a.6}}</th>
         <th scope="col">{{a.7}}</th>
         <th scope="col">{{a.8}}</th>
-        <th scope="col">{{a.9}}</th>
         <th scope="col">{{a.10}}</th>
         <th scope="col">{{a.11}}</th>
         <th scope="col">{{a.16}}</th>
@@ -86,6 +83,47 @@
       </tr>
     </table>
     {% endfor %}
+
+    <!-- <table class="new_table mt-3">
+      <thead>
+        <tr>
+          <th scope="col">Total</th>
+          <th scope="col">Basic</th>
+          <th scope="col">Housing</th>
+          <th scope="col">Transportation</th>
+          <th scope="col">Other</th>
+          <th scope="col">Gross</th>
+          <th scope="col">O.T/Other Income</th>
+          <th scope="col">Salary Advance</th>
+          <th scope="col">Deduction</th>
+          <th scope="col">LWOP</th>
+          <th scope="col">Net Salary</th>
+          <th scope="col">WPS Cin1</th>
+          <th scope="col">WPS Cin2</th>
+        </tr>
+      </thead>
+      <thead>
+        <tr>
+          {% for a in master %}
+          <th scope="col">{{a.3}}</th>
+          <th scope="col">000</th>
+          <th scope="col">000</th>
+          <th scope="col">000</th>
+          <th scope="col">000</th>
+          <th scope="col">000</th>
+          <th scope="col">000</th>
+          <th scope="col">000</th>
+          <th scope="col">000</th>
+          <th scope="col">000</th>
+          <th scope="col">000</th>
+          <th scope="col">000 </th>
+          <th scope="col">000 </th>
+          {% endfor %}
+        </tr>
+      </thead>      
+    </table> -->
+
+        
 
     <div class="row mt-5">
       <div class="col-sm-2">

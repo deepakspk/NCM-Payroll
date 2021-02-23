@@ -1,2 +1,4 @@
 *.pyc
-/media/documents
+media/documents/
+media/pdf/
+db.sqlite3

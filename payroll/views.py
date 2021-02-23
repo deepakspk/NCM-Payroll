@@ -86,7 +86,7 @@ class LeaveDetailView(DetailView):
 class LeaveCreateView(CreateView):
     template_name = 'payroll/leave_create.html'
     form_class = LeaveForm
-    # success_url = reverse_lazy("payroll:leave_list")
+    success_url = reverse_lazy("payroll:leave_list")
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
@@ -102,6 +102,7 @@ class LeaveUpdateView(UpdateView):
 class LeaveDeleteView(DeleteView):
     model = models.Leave
     success_url = reverse_lazy("payroll:leave_list")
+
 
 
 class EmployeeListView(ListView):
@@ -152,7 +153,7 @@ class AdditionalListView(ListView):
         list = context['additional_list']
         totalParticular = list.all().count()
         totalAdd = list.aggregate(Sum('amount'))['amount__sum']
-        tot_add = (round(totalAdd,2))
+        tot_add = totalAdd
         context['tot_add'] = tot_add
         context['totalParticular'] = totalParticular
         return context
@@ -197,7 +198,7 @@ class DeductionListView(ListView):
         list = context['deduction_list']
         totalParticular = list.all().count()
         totalded = list.aggregate(Sum('amount'))['amount__sum']
-        tot_ded = (round(totalded,2))
+        tot_ded = totalded
         context['tot_ded'] = tot_ded
         context['totalParticular'] = totalParticular
         return context
@@ -323,7 +324,7 @@ def employee_upload(request):
     next(io_string)
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
         if column[0] != "":
-            getdep = models.Department.objects.get(department=column[16])
+            getdep = models.Department.objects.get(department=column[14])
             created = models.Employee.objects.create(
             employee_id         = column[0],
             first_name          = column[1],
@@ -334,13 +335,11 @@ def employee_upload(request):
             DOB                 = column[6],
             religion            = column[7],
             citizenship         = column[8],
-            country_birth       = column[9],
-            email               = column[10],
-            phone               = column[11],
-            uae_address         = column[12],
-            home_country_phone  = column[13],
-            home_country_address= column[14],            
-            designation         = column[15],
+            email               = column[9],
+            phone               = column[10],
+            current_address     = column[11],
+            permanent_address   = column[12],            
+            designation         = column[13],
             department          = getdep           
             )
     context = {}
@@ -380,14 +379,11 @@ def paydetail_upload(request):
             other                  =   column[4],
             work_permit            =   column[5],
             cost_center            =   getct,
-            mode_of_payment        =   column[7],
-            bank_ac                =   column[8],
-            payment_method         =   column[9],
-            employee_unique        =   column[10],
-            agent_id               =   column[11],
-            work_permit_8_digits   =   column[12],
-            personal_no_14_digits  =   column[13],
-            bank_name_routing      =   column[14],
+            payment_method         =   column[7],
+            bank_name              =   column[8],
+            bank_ac                =   column[9],
+            
+            
             )
     context = {}
     return redirect("payroll:payslip_list")
@@ -840,7 +836,9 @@ def update_ps(request,pk):
                 department = getEmployee.department.department,
                 designation = getEmployee.designation,
                 payroll_id = data.payroll_id,
-                mode_of_payment = emp.mode_of_payment,
+                payment_method = emp.payment_method,
+                bank_name = emp.bank_name,
+                bank_ac = emp.bank_ac,
                 work_permit = emp.work_permit,
                 cost_center = emp.cost_center,
                 payroll_month = data.salary_month,
@@ -1538,6 +1536,7 @@ def PaysDetailsPDFView(request,pk):
         empDed = empDed or 0
         empDed = (round(empDed,2))
         gross = emp.gross_pay - emp.lowp_deduction
+        month = emp.payroll_month
 
         net = gross + empAdd - empDed
         total_empAdd += empAdd
@@ -1550,7 +1549,8 @@ def PaysDetailsPDFView(request,pk):
                     'total_empDed':total_empDed,
                     'total_gross': total_gross,
                     'total_net':total_net,
-                    'total_lwop':total_lwop,})
+                    'total_lwop':total_lwop,
+                    'month': month})
 
 def ProcessSalaryAdditional(request,pk):
     data = models.ProcessSalary.objects.get(pk=pk)
@@ -1607,6 +1607,7 @@ def ProcessSalaryPayDetails(request,pk):
 
 def ProcessSalaryMaster(request,pk):
     data = models.ProcessSalary.objects.get(pk=pk)
+    month = data.salary_month
     master = []
     #getting all cost center and work permit
     cost_center = models.CostCenter.objects.all()
@@ -1697,12 +1698,14 @@ def ProcessSalaryMaster(request,pk):
                     total_wps2 += wps2
 
                     cc_wp.append([empData,getPayslip,other_income,annual_ticket,salary_income,dedSum,net_salary,wps1,wps2,lwops])
+                
                 master.append([cc.cost_center,wp,cc_wp,total_basic,total_housing,total_transport,
                     total_other,total_gross,total_ot_in,total_an_ti,total_sa_in,
                     total_ded,total_net_salary,total_wps1,total_wps2,data,total_lwops])
 
     return render(request, 'payroll/process_salary_master.html',{
-        'master':master
+        'master':master,
+        'month':month
         }
     )
 

@@ -27,12 +27,10 @@ class Employee(models.Model):
     DOB                 = models.DateField(null=True, blank=True)
     religion            = models.CharField(max_length=20, null=True, blank=True)
     citizenship         = models.CharField(max_length=20, null=True, blank=True)
-    country_birth       = models.CharField(max_length=20, null=True, blank=True)
     email               = models.EmailField(max_length=70, blank=True,null=True)
     phone               = models.IntegerField(null=True, blank=True,default=0)
-    uae_address         = models.CharField(max_length=90, null=True, blank=True)
-    home_country_phone  = models.CharField(max_length=90, null=True, blank=True)
-    home_country_address= models.CharField(max_length=90, null=True, blank=True)
+    current_address     = models.CharField(max_length=90, null=True, blank=True)
+    permanent_address   = models.CharField(max_length=90, null=True, blank=True)
     department          = models.ForeignKey(Department, related_name='dept_name', on_delete=models.CASCADE,null=True,blank=True)
     designation         = models.CharField(max_length=40, null=True, blank=True)
     department_head     = models.BooleanField(default=False)
@@ -87,18 +85,15 @@ class Payslip(models.Model):
     housing_allowance      =   models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
     transportation_allowance = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
     other                  =   models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
-    work_permit_choice     =   (('Uniteam', 'Uniteam'),('Aspen', 'Aspen'),('Uniteam(Br2)', 'Uniteam(Br2)'),)
+    work_permit_choice     =   (('Nepal Can Move', 'Nepal Can Move'),('Nepal Can Buy', 'Nepal Can Buy'),('Nepal Can Code', 'Nepal Can Code'),)
     work_permit            =   models.CharField(max_length=60, choices=work_permit_choice)
     cost_center            =   models.ForeignKey(CostCenter, related_name='dept_name', on_delete=models.CASCADE,null=True,blank=True)
-    mode_of_payment        =   models.CharField(max_length=90, blank=True,null=True,)
-    bank_ac                =   models.CharField(max_length=90, blank=True,null=True,)
-    PAYMENT_METHOD_CHOICES = (('Bank', 'Bank'),('Lulu Exchange', 'Lulu Exchange'),('Cash', 'Cash'),('Other','Other'),)
+    PAYMENT_METHOD_CHOICES = (('Bank', 'Bank'),('Cash', 'Cash'),('Other','Other'),)
     payment_method         =   models.CharField(max_length=15, choices=PAYMENT_METHOD_CHOICES)
-    employee_unique        =   models.CharField(max_length=90, blank=True,null=True,)
-    agent_id               =   models.CharField(max_length=90, blank=True,null=True,)
-    work_permit_8_digits   =   models.CharField(max_length=8, blank=True,null=True,)
-    personal_no_14_digits  =   models.CharField(max_length=14, blank=True,null=True,)
-    bank_name_routing      =   models.CharField(max_length=9, blank=True,null=True,)
+    bank_name              =   models.CharField(max_length=9, blank=True,null=True,)
+    bank_ac                =   models.CharField(max_length=90, blank=True,null=True,)    
+    
+    
     def __str__ (self):
         return str(self.employee)
 
@@ -174,8 +169,7 @@ class Timesheet(models.Model):
 
 class Additionalpay(models.Model):
     payslip               =   models.ForeignKey(Payslip, related_name='additional_pay', on_delete=models.CASCADE,blank=True,null=True)
-    ADDITIONALPAY_CHOICES  = (('Annual Air Ticket', 'Annual Air Ticket'),
-                              ('Expense Reimbursement', 'Expense Reimbursement'),
+    ADDITIONALPAY_CHOICES  = (('Expense Reimbursement', 'Expense Reimbursement'),
                               ('Salary Advance', 'Salary Advance'),
                               ('Bonus', 'Bonus'),
                               ('Overtime/ Holiday Pay', 'Overtime/ Holiday Pay'),
@@ -236,7 +230,7 @@ class ProcessSalary(models.Model):
     total           = models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
 
     def __str__(self):
-        return str(self.salary_month)
+        return str(self.payroll_id)
 
     def get_absolute_url(self):
         return reverse("payroll:process_salary_detail", kwargs={'pk':self.pk})
@@ -251,14 +245,18 @@ class Report(models.Model):
     last_name           = models.CharField(max_length=60, blank=True,null=True)
     department          = models.CharField(max_length=60, blank=True,null=True)
     designation         = models.CharField(max_length=40, null=True, blank=True)
-    work_permit_choice  = (('Uniteam', 'Uniteam'),('Aspen', 'Aspen'),('Uniteam(Br2)', 'Uniteam(Br2)'),)
+    work_permit_choice  = (('Nepal Can Move', 'Nepal Can Move'),('Nepal Can Buy', 'Nepal Can Buy'),('Nepal Can Code', 'Nepal Can Code'),)
     work_permit         = models.CharField(max_length=60, choices=work_permit_choice)
     cost_center         = models.ForeignKey(CostCenter, related_name='department_name', on_delete=models.CASCADE,null=True,blank=True)
     payroll_id          = models.CharField(max_length=90, blank=True,null=True)
     payroll_month       = models.DateField(null=True, blank=True)
     start_date          = models.DateField(null=True, blank=True)
     finish_date         = models.DateField(null=True, blank=True)
-    mode_of_payment     = models.CharField(max_length=90, blank=True,null=True)
+    PAYMENT_METHOD_CHOICES = (('Bank', 'Bank'),('Cash', 'Cash'),('Other','Other'),)
+    payment_method         =   models.CharField(max_length=15, choices=PAYMENT_METHOD_CHOICES)
+    bank_name              =   models.CharField(max_length=9, blank=True,null=True,)
+    bank_ac                =   models.CharField(max_length=90, blank=True,null=True,)    
+    
     basic_salary        = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
     housing_allowance   = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)
     transportation_allowance = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True)

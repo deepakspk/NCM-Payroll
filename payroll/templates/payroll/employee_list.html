@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="jumbotron shadow-sm p-3 mb-5 rounded mt-3">
+<div class="jumbotron shadow-sm p-5 mb-5 rounded mt-3">
   <h2 class="display-4"> Employee list</h2>
   <a class="btn btn-outline-info btn-lg mb-2" href="{% url 'payroll:employee_create' %}" role="button"><i class="fas fa-user-plus"> </i> Add new employee</a>
   <a class="btn btn-outline-primary btn-lg mb-2" href="{% url 'payroll:employee_upload' %}">Bulk Employee Upload</a>

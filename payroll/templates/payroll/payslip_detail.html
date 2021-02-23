@@ -52,30 +52,13 @@
           </div>
           <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
             <div class="card-body">
-              <li class="list-group-item">Bank Detail : {{payslip_detail.mode_of_payment }}</li>
+              <li class="list-group-item">Bank Name: {{payslip_detail.bank_name }}</li>
               <li class="list-group-item">Bank Ac No. : {{payslip_detail.bank_ac }}</li>
-              <li class="list-group-item">Employee Unique ID : {{payslip_detail.employee_unique }}</li>
-              <li class="list-group-item">Agent ID : {{payslip_detail.agent_id }}</li>
+              
             </div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-header" id="headingFour">
-            <h5 class="mb-0">
-              <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                Employee Lulu Exchange information
-              </button>
-            </h5>
-          </div>
-          <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
-            <div class="card-body">
-              <li class="list-group-item">Bank Ac No. : {{payslip_detail.bank_ac }}</li>
-              <li class="list-group-item">Work permit 8 digits : {{payslip_detail.work_permit_8_digits }}</li>
-              <li class="list-group-item">Personal no 14 digits : {{payslip_detail.personal_no_14_digits }}</li>
-              <li class="list-group-item">Bank name & routing no. : {{payslip_detail.bank_name_routing }}</li>
-            </div>
-          </div>
-        </div>
+
       </div>
       </ul>
       <a class="btn btn-outline-secondary " href="{% url 'payroll:payslip_update' pk=payslip_detail.pk %}" role="button">Edit employee's pay details</a>

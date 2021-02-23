@@ -35,3 +35,10 @@ hr {
 dd {
   margin: 0px;
 }
+
+.display-4 {
+  color: purple;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+}
