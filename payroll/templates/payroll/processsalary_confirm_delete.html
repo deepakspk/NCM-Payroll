@@ -2,7 +2,7 @@
 {% block content %}
 <div class="jumbotron">
   <h3>Are you sure you want to delete
-    {{ processsalary.payroll_id }} - {{processsalary.salary_month | date:'M-Y'}} Payslip???
+    {{ processsalary.payroll_id }} - {{processsalary.salary_month }} Payslip???
   </h3>
   <form method="post">
     {% csrf_token %}

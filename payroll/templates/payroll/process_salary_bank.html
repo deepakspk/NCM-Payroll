@@ -13,19 +13,17 @@
   }
 </style>
   <p class="new_p"> <strong> Nepal Can</strong> </p>
-  <p class="new_p2"> <strong>Pay Details of the Employee-Bank for {{data.salary_month | date:'M-Y'}} </strong> </p>
+  <p class="new_p2"> <strong>Pay Details of the Employee-Bank for {{data.salary_month.month}} {{data.salary_month.year}}</strong> </p>
     <table class="new_table">
       <thead>
         <tr>
           <th scope="col">SN</th>
-          <th scope="col">Emplyee Unique ID</th>
-          <th scope="col">Agent ID</th>
-          <th scope="col">Employee Account With Agent</th>
+          <th scope="col">Emplyee Name</th>          
+          <th scope="col">Bank Name</th>
+          <th scope="col">Bank AC No.</th>
           <th scope="col">Income Fixed Component</th>
           <th scope="col">Income Variable Component</th>
           <th scope="col">Days on Leave without pay for the period</th>
-          <th scope="col">Pay Start Date</th>
-          <th scope="col">Pay End Date</th>
           <th scope="col">Salary Payable Days For the period</th>
         </tr>
       </thead>
@@ -33,15 +31,13 @@
         {% for i in datas %}
         <tr>
           <td scope="row">{{ forloop.counter }}</td>
-          <td> {{i.0.employee_unique}}</td>
-          <td> {{i.0.agent_id}}</td>
+          <td> {{i.0.employee}}</td>
+          <td> {{i.0.bank_name}}</td>
 
           <td > {{i.0.bank_ac}} </td>
           <td> {{i.0.gross_pay}}</td>
           <td> {{i.1}} </td>
           <td> {{i.4.lwop}}</td>
-          <td> {{i.3.start_date}} </td>
-          <td> {{i.3.finish_date}} </td>
           <td> {{i.4.pay_days}} </td>
           </tr>
         {% endfor %}

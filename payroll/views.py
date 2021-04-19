@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.urls import reverse_lazy
 from django.views.generic import (View, ListView, TemplateView, DetailView, CreateView, UpdateView, DeleteView)
-from . forms import EmployeeForm, DepartmentForm, PayslipForm, ProcessSalaryForm, AdditionalForm, DeductionForm, TimesheetForm, DocumentForm, LeaveForm
+from . forms import EmployeeForm, DepartmentForm, PayslipForm, ProcessSalaryForm, AdditionalForm, DeductionForm, TimesheetForm, DocumentForm, LeaveForm, NepaliDateForm
 from . import models
 import re, os
 from datetime import date
@@ -59,7 +59,7 @@ def employee_docs(request):
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect ('payroll:employee_list')
+            return redirect ('payroll:document_list')
     else:
         form = DocumentForm()
     return render(request, 'payroll/employee_docs.html',{
@@ -241,6 +241,7 @@ class EmployeeTimesheet(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(EmployeeTimesheet,self).get_context_data(*args,**kwargs)
+        
         return context
 
 class EmployeeTimesheetCreateView(CreateView):
@@ -295,7 +296,6 @@ def timesheet_upload(request):
             vacation=column[6],
             sick=column[7],
             lwop=column[8],
-            total=column[9],
             )
     context = {}
     return redirect("payroll:timesheet_list")
@@ -759,6 +759,7 @@ class ProcessSalaryDetailView(DetailView):
     def get_context_data(self, *args, **kwargs):
         data = super(ProcessSalaryDetailView,self).get_context_data(*args,**kwargs)
         getEmp = data['process_salary_detail'].employee.all()
+        salary_month = data['process_salary_detail'].salary_month
         empData = []
         total_gross_pay = 0
         total_actualgross = 0
@@ -766,18 +767,20 @@ class ProcessSalaryDetailView(DetailView):
         total_deduction = 0
         total_lwop = 0
         total_net_pay = 0
-        getgross = 0
 
         for emp in getEmp:
-            empAdd = models.Additionalpay.objects.filter(payslip=emp).aggregate(Sum('amount'))['amount__sum']
-            empDed = models.Deduction.objects.filter(payslip=emp).aggregate(Sum('amount'))['amount__sum']
+            empAdd = models.Additionalpay.objects.filter(payslip=emp, month=salary_month).aggregate(Sum('amount'))['amount__sum']
+            empDed = models.Deduction.objects.filter(payslip=emp, month=salary_month).aggregate(Sum('amount'))['amount__sum']
 
             try:
-                getgross = models.Timesheet.objects.get(employee=emp.employee)
-                # perhour = (emp.gross_pay/192)*hours
-                # actualgross = hours*perhour           )
-                actualgross = (emp.gross_pay/getgross.total)*getgross.pay_days
-                lwop = (emp.gross_pay/getgross.total)*getgross.lwop
+                getgross = models.Timesheet.objects.get(employee=emp.employee, month=salary_month)
+                
+                if getgross.partial == "Y":
+                    actualgross = (emp.gross_pay/getgross.month.days)*getgross.pay_days
+                    lwop = 0
+                else:
+                    actualgross = (emp.gross_pay/getgross.month.days)*getgross.pay_days
+                    lwop = (emp.gross_pay/getgross.month.days)*getgross.lwop
             except models.Timesheet.DoesNotExist:
                 getgross = 0
                 actualgross = 0
@@ -790,7 +793,10 @@ class ProcessSalaryDetailView(DetailView):
             addamt = (round(empAddAmount,2))
             dedamt = (round(empDedAmount,2))
             lwop = (round(lwop,2))
-            net = (emp.gross_pay + addamt) - dedamt - lwop
+            if getgross.partial == "Y":
+                net = (actualgross + addamt) - dedamt - lwop
+            else:
+                net = (emp.gross_pay + addamt) - dedamt - lwop
             total_gross_pay += emp.gross_pay
             total_actualgross += actualgross
             total_additional_pay += addamt
@@ -812,13 +818,13 @@ def update_ps(request,pk):
     total_net_pay = 0
     for emp in data.employee.all():
         empCount = data.employee.all().count()
-        getemployeetimesheet = models.Timesheet.objects.get(employee=emp.employee)
+        getemployeetimesheet = models.Timesheet.objects.get(employee=emp.employee, month=data.salary_month )
 
-        empAdd = models.Additionalpay.objects.filter(payslip=emp).aggregate(Sum('amount'))['amount__sum']
+        empAdd = models.Additionalpay.objects.filter(payslip=emp, month=data.salary_month).aggregate(Sum('amount'))['amount__sum']
         empDed = models.Deduction.objects.filter(payslip=emp).aggregate(Sum('amount'))['amount__sum']
         empAddAmount = empAdd or 0
         empDedAmount = empDed or 0
-        actual_gross_pay = (emp.gross_pay/getemployeetimesheet.total)*getemployeetimesheet.pay_days
+        actual_gross_pay = (emp.gross_pay/getemployeetimesheet.month.days)*getemployeetimesheet.pay_days
         actual_gross_pay = actual_gross_pay or 0
         net = (actual_gross_pay + empAddAmount) - empDedAmount
         total_gross_pay += emp.gross_pay
@@ -842,14 +848,11 @@ def update_ps(request,pk):
                 work_permit = emp.work_permit,
                 cost_center = emp.cost_center,
                 payroll_month = data.salary_month,
-                start_date    = data.start_date,
-                finish_date   = data.finish_date,
                 basic_salary = emp.basic_salary,
                 housing_allowance = emp.housing_allowance,
                 transportation_allowance = emp.transportation_allowance,
                 other = emp.other,
                 lowp_deduction = emp.gross_pay - actual_gross_pay,
-
             )
 
         newTimesheet = models.ReportTimesheet.objects.create(
@@ -863,10 +866,10 @@ def update_ps(request,pk):
             vacation = getemployeetimesheet.vacation,
             sick = getemployeetimesheet.sick,
             lwop = getemployeetimesheet.lwop,
-            total = getemployeetimesheet.total,
+            total = getemployeetimesheet.month.days,
         )
         # add additionl/deduction to the report
-        getEmpAddPay = models.Additionalpay.objects.filter(payslip=emp)
+        getEmpAddPay = models.Additionalpay.objects.filter(payslip=emp, month=data.salary_month)
         for empAddPay in getEmpAddPay:
             createAddPay = models.Additionalpays.objects.create(
                 report = newReport,
@@ -874,9 +877,9 @@ def update_ps(request,pk):
                 additional_label = empAddPay.additional_label,
                 amount = empAddPay.amount,
             )
-        getEmpDedPay = models.Deduction.objects.filter(payslip=emp)
+        getEmpDedPay = models.Deduction.objects.filter(payslip=emp, month=data.salary_month)
         for empDedPay in getEmpDedPay:
-            createAddPay = models.Deductions.objects.create(
+            createDedPay = models.Deductions.objects.create(
                 report = newReport,
                 deduction = empDedPay.deduction,
                 deduction_label = empDedPay.deduction_label,
@@ -1035,7 +1038,7 @@ class ReportDetailView(DetailView):
 
 class ReportDetailView_Revised(DetailView):
     model = models.Report
-    context_object_name = 'report_detail'
+    context_object_name = 'report_detail_view'
     template_name='payroll/report_detail_view.html'
 
     def get_context_data(self, *args, **kwargs):
@@ -1048,11 +1051,12 @@ class ReportDetailView_Revised(DetailView):
         timesheet = models.ReportTimesheet.objects.filter(report=data['object'])
         lowp = (data['object'].lowp_deduction) or 0
 
-        basic_rate = (data['object'].basic_salary)/timesheet[0].total
-        allowance_rate = (data['object'].housing_allowance)/timesheet[0].total
-        transport_rate = (data['object'].transportation_allowance)/timesheet[0].total
-        other_rate = (data['object'].other)/timesheet[0].total
+        basic_rate = (data['object'].basic_salary)/timesheet[0].month.days
+        allowance_rate = (data['object'].housing_allowance)/timesheet[0].month.days
+        transport_rate = (data['object'].transportation_allowance)/timesheet[0].month.days
+        other_rate = (data['object'].other)/timesheet[0].month.days
         total_rate = basic_rate + allowance_rate  + transport_rate + other_rate
+        total_days = timesheet[0].normal+timesheet[0].weekend+timesheet[0].holiday+timesheet[0].vacation+timesheet[0].sick
 
         normal_basic = basic_rate * timesheet[0].normal
         normal_allowance = allowance_rate * timesheet[0].normal
@@ -1193,7 +1197,7 @@ class ReportDetailView_Revised(DetailView):
                     holiday_basic,holiday_allowance,holiday_transport,holiday_other,holiday_total,
                     vacation_basic,vacation_allowance,vacation_transport,vacation_other,vacation_total,
                     sick_basic,sick_allowance,sick_transport,sick_other,sick_total,
-                    total_basic, total_allowance, total_transport, total_other, grand_total, ]
+                    total_basic, total_allowance, total_transport, total_other, grand_total,total_days ]
 
         data['empData'] = empData
         return data
@@ -1258,7 +1262,7 @@ def ListofPayroll(request):
 def DetailofPayroll(request,pk):
     data = models.ProcessSalary.objects.get(pk=pk)
     getEmp = models.Report.objects.filter(payroll_id=data.payroll_id)
-
+    
     empCount = getEmp.count()
     empData = []
     total_gross = 0
@@ -1269,8 +1273,9 @@ def DetailofPayroll(request,pk):
     total_net = 0
 
     for emp in getEmp:
-        empAdd = models.Additionalpays.objects.filter(report=emp).aggregate(Sum('amount'))['amount__sum']
+        empAdd = models.Additionalpays.objects.filter(report=emp,).aggregate(Sum('amount'))['amount__sum']
         empded = models.Deductions.objects.filter(report=emp).aggregate(Sum('amount'))['amount__sum']
+        empTim = models.ReportTimesheet.objects.filter(report__employee_id=emp.employee_id, report__payroll_id=emp.payroll_id)
         empAddAmount = empAdd or 0
         empdedAmount = empded or 0
         addamt=(round(empAddAmount,2))
@@ -1283,8 +1288,8 @@ def DetailofPayroll(request,pk):
         total_add += addamt
         total_ded += dedamt
         total_net += net
-        empData.append([emp,emp.employee_id,emp.gross_pay,addamt,dedamt,net,actual_gross,emp.lowp_deduction])
-
+        empData.append([emp,emp.employee_id,emp.gross_pay,addamt,dedamt,net,actual_gross,emp.lowp_deduction,empTim])
+        
     return render(request,'payroll/payroll_detail.html',
     {'data':data,
     'getEmp':getEmp,
@@ -1299,6 +1304,7 @@ def DetailofPayroll(request,pk):
     'total_ded': total_ded,
     'total_net': total_net,
     'total_lwop': total_lwop,
+    
     })
 
 
@@ -1604,7 +1610,6 @@ def ProcessSalaryPayDetails(request,pk):
         datas.append([emp])
     return render(request, 'payroll/process_salary_paydetails.html', {'datas':datas})
 
-
 def ProcessSalaryMaster(request,pk):
     data = models.ProcessSalary.objects.get(pk=pk)
     month = data.salary_month
@@ -1638,8 +1643,8 @@ def ProcessSalaryMaster(request,pk):
                     getPayslip = models.Payslip.objects.get(pk=pays)
                     empData = models.Employee.objects.get(pk=getPayslip.employee.pk)
 
-                    getTimesheet = models.Timesheet.objects.get(employee=empData)
-                    lwops = (getPayslip.gross_pay/getTimesheet.total)*getTimesheet.lwop
+                    getTimesheet = models.Timesheet.objects.get(employee=empData, month=data.salary_month)
+                    lwops = (getPayslip.gross_pay/getTimesheet.month.days)*getTimesheet.lwop
                     lwops = (round(lwops,2))
 
                     getdedSum = models.Deduction.objects.filter(payslip=getPayslip).aggregate(
@@ -1647,33 +1652,33 @@ def ProcessSalaryMaster(request,pk):
                     dedSum = getdedSum or 0
                     dedSum = round(dedSum,2)
                     try:
-                        get_over_time = models.Additionalpay.objects.get(payslip=getPayslip,additional='Overtime/ Holiday Pay')
+                        get_over_time = models.Additionalpay.objects.get(payslip=getPayslip, month=data.salary_month,additional='Overtime/ Holiday Pay')
                         over_time = get_over_time.amount or 0
                     except models.Additionalpay.DoesNotExist:
                         over_time = 0
                     try:
-                        getBonus = models.Additionalpay.objects.get(payslip=getPayslip, additional='Bonus')
+                        getBonus = models.Additionalpay.objects.get(payslip=getPayslip, month=data.salary_month, additional='Bonus')
                         bonus = getBonus.amount or 0
                     except models.Additionalpay.DoesNotExist:
                         bonus = 0
                     try:
-                        get_reimbursement = models.Additionalpay.objects.get(payslip=getPayslip,additional='Expense Reimbursement')
+                        get_reimbursement = models.Additionalpay.objects.get(payslip=getPayslip, month=data.salary_month, additional='Expense Reimbursement')
                         reimbursement = get_reimbursement.amount or 0
                     except models.Additionalpay.DoesNotExist:
                         reimbursement = 0
                     try:
-                        get_other = models.Additionalpay.objects.get(payslip=getPayslip,additional='Other')
+                        get_other = models.Additionalpay.objects.get(payslip=getPayslip, month=data.salary_month, additional='Other')
                         other = get_other.amount or 0
                     except models.Additionalpay.DoesNotExist:
                         other = 0
 
                     try:
-                        getAnnual_ticket = models.Additionalpay.objects.get(payslip=getPayslip, additional='Annual Air Ticket')
+                        getAnnual_ticket = models.Additionalpay.objects.get(payslip=getPayslip, month=data.salary_month, additional='Annual Air Ticket')
                         annual_ticket = getAnnual_ticket.amount or 0
                     except models.Additionalpay.DoesNotExist:
                         annual_ticket = 0
                     try:
-                        getsalaryAdvance = models.Additionalpay.objects.get(payslip=getPayslip, additional='Salary Advance')
+                        getsalaryAdvance = models.Additionalpay.objects.get(payslip=getPayslip, month=data.salary_month, additional='Salary Advance')
                         salary_income = getsalaryAdvance.amount or 0
                     except models.Additionalpay.DoesNotExist:
                         salary_income = 0
@@ -1721,7 +1726,7 @@ def ProcessSalaryBank(request,pk):
         empAdd = models.Additionalpay.objects.filter(payslip=emp).aggregate(Sum('amount'))['amount__sum']
         empDed = models.Deduction.objects.filter(payslip=emp).aggregate(Sum('amount'))['amount__sum']
         empTst = models.Timesheet.objects.get(employee=emp.employee)
-        lwops = (emp.gross_pay/empTst.total)*empTst.lwop
+        lwops = (emp.gross_pay/empTst.month.days)*empTst.lwop
         lwops = (round(lwops,2))
         empAddAmount = empAdd or 0
         empDedAmount = empDed or 0

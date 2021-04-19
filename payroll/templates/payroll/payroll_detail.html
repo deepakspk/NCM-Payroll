@@ -42,10 +42,10 @@
         <th scope="col">SN.</th>
         <th scope="col">Employee</th>
         <!-- <th scope="col">Gross</th> -->
-        <th scope="col">Gross</th>
+        <th scope="col"> Actual Gross</th>
         <th scope="col">Additional</th>
         <th scope="col">Deduction</th>
-        <th scope="col">LWOP</th>
+        <th scope="col">Partial</th>
         <th scope="col">Net Pay</th>
         <th scope="col">View Report</th>
       </tr>
@@ -59,14 +59,19 @@
         <td> {{ emp.6|intcomma }}</td>
         <td> {{ emp.3|intcomma }}</td>
         <td> {{ emp.4|intcomma }}</td>
-        <td> ( {{ emp.7|intcomma }} )</td>
+        <td> 
+          {% for empo in emp.8%}          
+           {{empo.partial}} 
+          {% endfor %}
+        </td>
+
         <td> {{ emp.5|intcomma }}</td>
         <td>
           <!-- <a href="{% url 'payroll:payroll_report_view' payrollid=data.payroll_id empid=emp.1 %}">
             <i class="fa fa-eye"></i>
           </a> | -->
-          <a href="{% url 'payroll:payroll_report' payrollid=data.payroll_id empid=emp.1 %}"><i class="fa fa-eye"></i></a> |
-          <!-- <a href="{% url 'payroll:pdf' pk=data.payroll_id empid=emp.1 %}"><i class="fa fa-file-pdf"></i></a> | -->
+          <a href="{% url 'payroll:payroll_report' payrollid=data.payroll_id empid=emp.1 %}"><i class="fa fa-eye"></i></a> 
+          <a href="{% url 'payroll:payroll_report_view' payrollid=data.payroll_id empid=emp.1 %}"> PDF </a>
           <a href="{% url 'payroll:displayPdf' pk=data.payroll_id empid=emp.1 %}"><i class="fa fa-file-pdf"></i></a> |
           <a href="{% url 'payroll:emailpdf' pk=data.payroll_id empid=emp.1 %}"><i class="fas fa-paper-plane"></i></a>
          
@@ -77,11 +82,12 @@
         <tr>
           <th scope="col">Total</th>
           <th scope="col"> {{ empCount }} </th>
-          <th scope="col"> {{ total_gross|intcomma }}</th>
+          <th scope="col"> {{ total_actual_gross|intcomma }}</th>
           <!-- <th scope="col"> {{ total_actual_gross }}</th> -->
           <th scope="col"> {{ total_add|intcomma }}</th>
           <th scope="col"> {{ total_ded|intcomma }}</th>
-          <th scope="col"> ( {{ total_lwop|intcomma }} )</th>
+          <!-- <th scope="col"> ( {{ total_lwop|intcomma }} )</th> -->
+          <th scope="col">  </th>
           <th scope="col"> {{ total_net|intcomma}}</th>
           <th scope="col"> </th>
         </tr>

@@ -7,7 +7,7 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
 
   <link rel="stylesheet" href="{% static 'css/stylesheet.css'%}">
-  <title>Uniteam HR</title>
+  <title>NC HR</title>
 </head>
 <body>
 <div class="container mycontent">
@@ -20,7 +20,7 @@
 
   <div class="card-body">
     <div class="text-center mb-5">
-      <h3 class=" payslip_h3">PAYSLIP <br> <small class="text-muted">For the month of {{report_detail.payroll_month | date:'M-Y'}} </small></h3><hr><hr>
+      <h3 class=" payslip_h3">PAYSLIP <br> <small class="text-muted">For the month of {{report_detail.payroll_month.month}} {{report_detail.payroll_month.year}}</small></h3><hr><hr>
       <h5> {{report_detail.start_date}} - {{report_detail.finish_date}} </small></h5><hr><hr>
     </div>
 

@@ -17,6 +17,16 @@ class CostCenter(models.Model):
     def __str__(self):
         return self.cost_center
 
+class NepaliDate(models.Model):
+    year                   =   models.CharField(max_length=60,)
+    month                  =   models.CharField(max_length=60,)
+    start                  =   models.DateField()
+    end                    =   models.DateField()
+    days                   =   models.DecimalField(max_digits=12, decimal_places=2,)   
+
+    def __str__(self):
+        return str(self.month) +'__'+ str(self.year)
+
 class Employee(models.Model):
     employee_id         = models.CharField(primary_key=True, max_length=60, unique=True)
     first_name          = models.CharField(max_length=60, blank=True,null=True)
@@ -143,9 +153,9 @@ class Clinical(models.Model):
 
 class Timesheet(models.Model):
     employee               =   models.ForeignKey(Employee, related_name='employee_timesheet', on_delete=models.CASCADE, blank=True,null=True)
-    month                  =   models.DateField()
+    month                  =   models.ForeignKey(NepaliDate, related_name='nepali_date', on_delete=models.CASCADE, blank=True,null=True)
     partial_choice         =   (('N', 'N'),('Y', 'Y'))
-    partial                =   models.CharField(max_length=60, default=partial_choice[0][0], choices=partial_choice,)
+    partial                =   models.CharField(max_length=60, choices=partial_choice,)
     # hours                  =   models.DecimalField(max_digits=12, decimal_places=2,)
     normal                 =   models.DecimalField(max_digits=12, decimal_places=2,)
     weekend                =   models.DecimalField(max_digits=12, decimal_places=2,)
@@ -153,7 +163,7 @@ class Timesheet(models.Model):
     vacation               =   models.DecimalField(max_digits=12, decimal_places=2,)
     sick                   =   models.DecimalField(max_digits=12, decimal_places=2,)
     lwop                   =   models.DecimalField(max_digits=12, decimal_places=2,)
-    total                  =   models.DecimalField(max_digits=12, decimal_places=2,)
+    # total                  =   models.DecimalField(max_digits=12, decimal_places=2,)
 
     def __str__(self):
         return str(self.employee) +'__'+ str(self.month)
@@ -169,6 +179,7 @@ class Timesheet(models.Model):
 
 class Additionalpay(models.Model):
     payslip               =   models.ForeignKey(Payslip, related_name='additional_pay', on_delete=models.CASCADE,blank=True,null=True)
+    month                  =   models.ForeignKey(NepaliDate, related_name='nepali_date_additional', on_delete=models.CASCADE, blank=True,null=True)
     ADDITIONALPAY_CHOICES  = (('Expense Reimbursement', 'Expense Reimbursement'),
                               ('Salary Advance', 'Salary Advance'),
                               ('Bonus', 'Bonus'),
@@ -177,11 +188,11 @@ class Additionalpay(models.Model):
     additional             =   models.CharField(max_length=60, choices=ADDITIONALPAY_CHOICES, blank=True,null=True)
     additional_label       =   models.CharField(max_length=90, blank=True,null=True)
     amount                 =   models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
-    OCCURS_CHOICE          = (('Once', 'Once'),
-                             ('Monthly', 'Monthly'),)
-    occur                  =   models.CharField(max_length=60, choices=OCCURS_CHOICE, blank=True,null=True)
-    start_date             =   models.DateField(null=True, blank=True)
-    end_date               =   models.DateField(null=True, blank=True)
+    # OCCURS_CHOICE          = (('Once', 'Once'),
+                            # ('Monthly', 'Monthly'),)
+    # occur                  =   models.CharField(max_length=60, choices=OCCURS_CHOICE, blank=True,null=True)
+    # start_date             =   models.DateField(null=True, blank=True)
+    # end_date               =   models.DateField(null=True, blank=True)
 
 
     def __str__ (self):
@@ -189,6 +200,7 @@ class Additionalpay(models.Model):
 
 class Deduction(models.Model):
     payslip               =   models.ForeignKey(Payslip, related_name='salary_deduction', on_delete=models.CASCADE,blank=True,null=True)
+    month                 =   models.ForeignKey(NepaliDate, related_name='nepali_date_deduction', on_delete=models.CASCADE, blank=True,null=True)
     DEDUCTION_CHOICES     =   (('Housing Loan', 'Housing Loan'),
                               ('Salary Advance', 'Salary Advance'),
                               ('Traffic Fine', 'Traffic Fine'),
@@ -197,12 +209,12 @@ class Deduction(models.Model):
                               ('Other', 'Other'),)
     deduction             =   models.CharField(max_length=60, choices=DEDUCTION_CHOICES, blank=True,null=True)
     deduction_label       =   models.CharField(max_length=90, blank=True,null=True)
-    amount                 =   models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
-    OCCURS_CHOICE          = (('Once', 'Once'),
+    amount                =   models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
+    OCCURS_CHOICE         = (('Once', 'Once'),
                              ('Monthly', 'Monthly'),)
-    occur                  =   models.CharField(max_length=60, choices=OCCURS_CHOICE, blank=True,null=True)
-    start_date             =   models.DateField(null=True, blank=True)
-    end_date               =   models.DateField(null=True, blank=True)
+    # occur                  =   models.CharField(max_length=60, choices=OCCURS_CHOICE, blank=True,null=True)
+    # start_date             =   models.DateField(null=True, blank=True)
+    # end_date               =   models.DateField(null=True, blank=True)
 
 
     def __str__ (self):
@@ -211,10 +223,8 @@ class Deduction(models.Model):
 
 class ProcessSalary(models.Model):
     payroll_id      = models.CharField(max_length=90, blank=True,null=True)
-    salary_month    = models.DateField(default =datetime.datetime.now)
+    salary_month    = models.ForeignKey(NepaliDate, related_name='nepali_date_ps', on_delete=models.CASCADE, blank=True,null=True)
     employee        = models.ManyToManyField(Payslip, related_name='employee_name')
-    start_date      = models.DateField()
-    finish_date     = models.DateField()
     SALARY_TYPES    = (('Normal', 'Normal'),
                       ('Adjustment', 'Adjustment'),)
     salary_type     = models.CharField(max_length=60, default=SALARY_TYPES[0][0], choices=SALARY_TYPES, blank=True,null=True)
@@ -249,9 +259,7 @@ class Report(models.Model):
     work_permit         = models.CharField(max_length=60, choices=work_permit_choice)
     cost_center         = models.ForeignKey(CostCenter, related_name='department_name', on_delete=models.CASCADE,null=True,blank=True)
     payroll_id          = models.CharField(max_length=90, blank=True,null=True)
-    payroll_month       = models.DateField(null=True, blank=True)
-    start_date          = models.DateField(null=True, blank=True)
-    finish_date         = models.DateField(null=True, blank=True)
+    payroll_month       = models.ForeignKey(NepaliDate, related_name='nepali_date_report', on_delete=models.CASCADE, blank=True,null=True)
     PAYMENT_METHOD_CHOICES = (('Bank', 'Bank'),('Cash', 'Cash'),('Other','Other'),)
     payment_method         =   models.CharField(max_length=15, choices=PAYMENT_METHOD_CHOICES)
     bank_name              =   models.CharField(max_length=9, blank=True,null=True,)
@@ -286,14 +294,15 @@ class Additionalpays(models.Model):
                               ('Overtime/ Holiday Pay', 'Overtime/ Holiday Pay'),
                               ('Other', 'Other'),)
     report                 = models.ForeignKey(Report, on_delete=models.CASCADE)
+    month                  = models.ForeignKey(NepaliDate, related_name='nepali_date_add', on_delete=models.CASCADE, blank=True,null=True)
     additional             =   models.CharField(max_length=60, choices=ADDITIONALPAY_CHOICES, blank=True,null=True)
     additional_label       =   models.CharField(max_length=90, blank=True,null=True)
     amount                 =   models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
     OCCURS_CHOICE          = (('Once', 'Once'),
                              ('Monthly', 'Monthly'),)
-    occur                  =   models.CharField(max_length=60, choices=OCCURS_CHOICE, blank=True,null=True)
-    start_date             =   models.DateField(null=True, blank=True)
-    end_date               =   models.DateField(null=True, blank=True)
+    # occur                  =   models.CharField(max_length=60, choices=OCCURS_CHOICE, blank=True,null=True)
+    # start_date             =   models.DateField(null=True, blank=True)
+    # end_date               =   models.DateField(null=True, blank=True)
 
 
     def __str__ (self):
@@ -309,14 +318,15 @@ class Deductions(models.Model):
                               ('Loan', 'Loan'),
                               ('Other', 'Other'),)
     report                =   models.ForeignKey(Report, on_delete=models.CASCADE)
-    deduction             =   models.CharField(max_length=60, choices=DEDUCTION_CHOICES, blank=True,null=True)
+    month                 =   models.ForeignKey(NepaliDate, related_name='nepali_date_ded', on_delete=models.CASCADE, blank=True,null=True)
+    deduction             =   models.CharField(max_length=90, blank=True,null=True)
     deduction_label       =   models.CharField(max_length=90, blank=True,null=True)
     amount                =   models.DecimalField(max_digits=12, decimal_places=2, blank=True,null=True)
     OCCURS_CHOICE         =  (('Once', 'Once'),
                              ('Monthly', 'Monthly'),)
-    occur                 =   models.CharField(max_length=60, choices=OCCURS_CHOICE, blank=True,null=True)
-    start_date            =   models.DateField(null=True, blank=True)
-    end_date              =   models.DateField(null=True, blank=True)
+    # occur                 =   models.CharField(max_length=60, choices=OCCURS_CHOICE, blank=True,null=True)
+    # start_date            =   models.DateField(null=True, blank=True)
+    # end_date              =   models.DateField(null=True, blank=True)
 
     def __str__ (self):
         return str(self.deduction)
@@ -325,7 +335,7 @@ class Deductions(models.Model):
 class ReportTimesheet(models.Model):
     report                 =   models.ForeignKey(Report, on_delete=models.CASCADE)
     employee               =   models.CharField(max_length=60,)
-    month                  =   models.DateField()
+    month                  =   models.ForeignKey(NepaliDate, related_name='nepali_date_rt', on_delete=models.CASCADE, blank=True,null=True)
     partial                =   models.CharField(max_length=60,)
     normal                 =   models.DecimalField(max_digits=12, decimal_places=2,)
     weekend                =   models.DecimalField(max_digits=12, decimal_places=2,)
@@ -345,3 +355,13 @@ class ReportTimesheet(models.Model):
     @property
     def pay_days(self):
         return self.normal + self.weekend + self.holiday + self.vacation+ self.sick
+
+class ReportNepaliDate(models.Model):
+    year                   =   models.CharField(max_length=60,)
+    month                  =   models.CharField(max_length=60,)
+    start                  =   models.DateField()
+    end                    =   models.DateField()
+    days                   =   models.DecimalField(max_digits=12, decimal_places=2,)   
+
+    def __str__(self):
+        return str(self.month) +'__'+ str(self.year)

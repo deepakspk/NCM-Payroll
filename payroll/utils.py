@@ -65,6 +65,12 @@ def getPdf(pk,empid):
     sick_other = other_rate * timesheet[0].sick
     sick_total = sick_basic + sick_allowance + sick_transport + sick_other
 
+    lwop_basic = basic_rate * timesheet[0].lwop
+    lwop_allowance = allowance_rate * timesheet[0].lwop
+    lwop_transport = transport_rate * timesheet[0].lwop
+    lwop_other = other_rate * timesheet[0].lwop
+    lwop_total = lwop_basic + lwop_allowance + lwop_transport + lwop_other
+
     total_basic = normal_basic + weekend_basic + holiday_basic + vacation_basic + sick_basic
     total_allowance = normal_allowance + weekend_allowance + holiday_allowance + vacation_allowance + sick_allowance
     total_transport = normal_transport + weekend_transport + holiday_transport + vacation_transport + sick_transport
@@ -107,6 +113,13 @@ def getPdf(pk,empid):
     sick_transport = (round(sick_transport,2))
     sick_other = (round(sick_other,2))
     sick_total = (round(sick_total,2))
+
+    lwop_basic = (round(lwop_basic,2))
+    lwop_allowance = (round(lwop_allowance,2))
+    lwop_transport = (round(lwop_transport,2))
+    lwop_other = (round(lwop_other,2))
+    lwop_total = (round(lwop_total,2))
+
 
     total_basic = (round(total_basic,2))
     total_allowance = (round(total_allowance,2))
@@ -215,7 +228,7 @@ def getPdf(pk,empid):
     elems.append(payslip)
 
     month = Table([
-        [f"For the Month of {payroll_month}"]
+        [f"For the Month of {payroll_month.month} {payroll_month.year}"]
     ], [500])
     monthStyle = TableStyle([
         ('ALIGN',(0,0),(-1,-1),'CENTER'),
@@ -311,7 +324,7 @@ def getPdf(pk,empid):
     ], [100,40,60,60,80,60,60,60])
 
     lwop = Table([
-        ['LWOP',':',timesheet[0].lwop,'-','-','-','-','-']
+        ['LWOP',':',timesheet[0].lwop,lwop_basic,lwop_allowance,lwop_transport,lwop_other,lwop_total]
     ], [100,40,60,60,80,60,60,60])
 
     np = Table([

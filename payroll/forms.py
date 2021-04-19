@@ -1,4 +1,4 @@
-from .models import Department, Employee, Payslip, ProcessSalary, Additionalpay, Deduction, Timesheet, Document, Leave
+from .models import Department, Employee, Payslip, ProcessSalary, Additionalpay, Deduction, Timesheet, Document, Leave, NepaliDate
 from django.forms import ModelForm, Form
 from django import forms
 from . import models
@@ -88,7 +88,6 @@ class TimesheetForm(ModelForm):
         model= Timesheet
         fields = '__all__'
         widgets = {
-            'month':forms.DateInput(attrs={'type':'date'}),
             'start_date':forms.DateInput(attrs={'type':'date'}),
             'end_date':forms.DateInput(attrs={'type':'date'})
         }
@@ -123,9 +122,23 @@ class ProcessSalaryForm(ModelForm):
         fields = '__all__'
         exclude = ('status','gross_pay','Additional_pay','deduction','total', 'employee_count', 'actual_gross_pay')
         widgets = {
-            'salary_month':forms.DateInput(attrs={'type':'date'}),
             'start_date':forms.DateInput(attrs={'type':'date'}),
             'finish_date':forms.DateInput(attrs={'type':'date'})
+        }
+
+    def __init__(self, *args, **kwargs):
+         super().__init__(*args, **kwargs)
+         for field in self.fields:
+             self.fields[field].widget.attrs.update({'class':'form-control'})
+
+
+class NepaliDateForm(ModelForm):
+    class Meta:
+        model= NepaliDate
+        fields = '__all__'
+        widgets = {
+            'start':forms.DateInput(attrs={'type':'date'}),
+            'end':forms.DateInput(attrs={'type':'date'})
         }
 
     def __init__(self, *args, **kwargs):

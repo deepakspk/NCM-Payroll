@@ -24,9 +24,9 @@
           <td scope="row">{{ forloop.counter }}</td>
           <td> {{ dt.0.payroll_id }}</td>
           {% if dt.0.status == "Processing" %}
-          <td> <a href="{% url 'payroll:process_salary_detail' pk=dt.0.pk %}">{{dt.0.salary_month | date:'M-Y' }}</a> </td>
+          <td> <a href="{% url 'payroll:process_salary_detail' pk=dt.0.pk %}">{{dt.0.salary_month}}</a> </td>
           {% else %}
-          <td>{{dt.0.salary_month | date:'M-Y' }}</td>
+          <td>{{dt.0.salary_month.month }}</td>
           {% endif %}
           <td> {{ dt.1 }}</td>
           <td> {{ dt.0.status}}</td>

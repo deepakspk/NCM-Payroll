@@ -11,7 +11,7 @@
   }
 </style>
 <p class="new_p"> <strong> Nepal Can</strong> </p>
-<p class="new_p2"> <strong> Payroll for the month of {{month | date:'M-Y'}} </strong> </p>
+<p class="new_p2"> <strong> Payroll for the month of {{month.month}} {{month.year}}</strong> </p>
 
   {% for a in master %}
   <p class="new_p"> {{a.0}} {{a.1}}</p>

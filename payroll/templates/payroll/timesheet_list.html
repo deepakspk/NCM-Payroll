@@ -29,7 +29,7 @@
         <tr>
           <td scope="row">{{ forloop.counter }}</td>
           <td> <a href="{% url 'payroll:timesheet_update' pk=timesheet.pk %}"> {{timesheet.employee}} </a> </td>
-          <td> {{timesheet.month }} </td>
+          <td> {{timesheet.month.month}} {{timesheet.month.year}} </td>
           <td> {{timesheet.partial }}</td>
           <td> {{timesheet.normal}}</td>
           <td> {{timesheet.weekend}}</td>
@@ -37,7 +37,7 @@
           <td> {{timesheet.vacation }}</td>
           <td> {{timesheet.sick}}</td>
           <td> {{timesheet.lwop }}</td>
-          <td> {{timesheet.total}}</td>
+          <td> {{timesheet.month.days}}</td>
           <td> <a href="{% url 'payroll:timesheet_delete' pk=timesheet.pk %}"> <i class="fas fa-trash-alt"></i> </a> </td>
         </tr>
         {% endfor %}

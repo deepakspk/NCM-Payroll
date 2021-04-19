@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Department
 from .models import Employee
 from .models import Payslip, Timesheet, ReportTimesheet
-from .models import ProcessSalary, Additionalpay, Deduction, Report, Additionalpays, Deductions,AdditionalPaysAdmin, CostCenter, Clinical, Document, Leave
+from .models import ProcessSalary, Additionalpay, Deduction, Report, Additionalpays, Deductions,AdditionalPaysAdmin, CostCenter, Clinical, Document, Leave, NepaliDate, ReportNepaliDate
 # Register your models here.
 admin.site.register(Department)
 admin.site.register(Employee)
@@ -19,3 +19,5 @@ admin.site.register(ReportTimesheet)
 admin.site.register(Clinical)
 admin.site.register(Document)
 admin.site.register(Leave)
+admin.site.register(NepaliDate)
+admin.site.register(ReportNepaliDate)

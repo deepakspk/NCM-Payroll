@@ -12,6 +12,7 @@
         <tr>
           <th scope="col">SN</th>
           <th>Employee</th>
+          <th>Month</th>
           <th scope="col"> Particular</th>
           <th scope="col">label</th>
           <th scope="col">Amount</th>
@@ -23,6 +24,7 @@
         <tr>
           <td scope="row">{{ forloop.counter }}</td>
           <td> {{additional.payslip}}</td>
+          <td> {{additional.month.month}} {{additional.month.year}}</td>
           <td> <a href="{% url 'payroll:additional_update' pk=additional.pk %}"> {{additional.additional }} </a> </td>
           <td> {{additional.additional_label }}</td>
           <td> {{additional.amount}}</td>
@@ -34,8 +36,9 @@
           <th scope="col">Total</th>
           <th scope="col">{{ totalParticular }} </th>
           <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col"></th>
           <th scope="col">{{ tot_add }}</th>
-          <th></th>
           <th></th>
         </tr>
 

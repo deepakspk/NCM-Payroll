@@ -22,7 +22,7 @@
             <td scope="row">{{ forloop.counter }}</td>
             <td scope="row"> <a href="{% url 'payroll:process_salary_detail' pk=pay.0.pk %}">
                 {{ pay.0.payroll_id }} </a></td>
-            <td scope="row">{{ pay.0.salary_month | date:'M-Y'}}</td>
+            <td scope="row">{{ pay.0.salary_month.month}} {{ pay.0.salary_month.year}}</td>
             <td scope="row"> {{pay.1}}</td>
             {% endfor %}
         </tbody>
@@ -53,7 +53,7 @@
             <td scope="row">{{ forloop.counter }}</td>
             <td scope="row"> <a href="{% url 'payroll:payroll_detail' pk=pay.0.pk %}">
                 {{ pay.0.payroll_id }} </a></td>
-            <td scope="row"> {{ pay.0.salary_month | date:'M-Y' }}</td>
+            <td scope="row"> {{ pay.0.salary_month.month}} {{ pay.0.salary_month.year}}</td>
             <td scope="row"> {{pay.0.employee_count}}</td>
             <!-- <td scope="row">{{ pay.0.gross_pay|intcomma}}</td> -->
             <td scope="row">{{ pay.0.actual_gross_pay|intcomma}}</td>

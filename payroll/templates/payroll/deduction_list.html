@@ -12,6 +12,7 @@
         <tr>
           <th scope="col">SN</th>
           <th scope="col">Particular</th>
+          <th> Month</th>
           <th> Label</th>
           <th> Amount</th>
           <th> Employee</th>
@@ -22,10 +23,11 @@
         {% for deduction in deduction_list %}
         <tr>
           <td scope="row">{{ forloop.counter }}</td>
+          <td> {{deduction.payslip}}</td>
+          <td> {{deduction.month.month}} {{deduction.month.year}}</td>
           <td> <a href="{% url 'payroll:deduction_update' pk=deduction.pk %}"> {{deduction.deduction}} </a> </td>
           <td> {{deduction.deduction_label }}</td>
-          <td> {{deduction.amount}}</td>
-          <td> {{deduction.payslip}}</td>
+          <td> {{deduction.amount}}</td>          
           <td> <a href="{% url 'payroll:deduction_delete' pk=deduction.pk %}"> <i class="fas fa-trash-alt"></i> </a> </td>
         </tr>
         {% endfor %}
@@ -34,8 +36,9 @@
           <th> Total </th>
           <th> {{ totalParticular }}</th>
           <th> </th>
-          <th> {{ tot_ded }}</th>
           <th> </th>
+          <th> </th>
+          <th> {{ tot_ded }}</th>
           <th> </th>
         </tr>
 
